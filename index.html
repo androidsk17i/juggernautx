@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juggernaut-X-Hyper Prompt Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Juggernaut-X-Hyper Prompt Generator</h1>
+            <p>Create optimized text prompts for Stable Diffusion image generation</p>
+            <button id="api-settings-btn" class="api-btn" title="API Key Settings">
+                <i class="fas fa-key"></i> API Settings
+            </button>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <label for="user-description">Describe what you want to visualize:</label>
+                <textarea id="user-description" rows="4" placeholder="E.g., A serene mountain landscape at sunrise with fog"></textarea>
+                
+                <div class="options">
+                    <div class="style-selector">
+                        <label for="art-style">Art Style (optional):</label>
+                        <select id="art-style">
+                            <option value="">Select a style</option>
+                            <option value="photorealistic">Photorealistic</option>
+                            <option value="cinematic">Cinematic</option>
+                            <option value="anime">Anime</option>
+                            <option value="digital art">Digital Art</option>
+                            <option value="oil painting">Oil Painting</option>
+                            <option value="watercolor">Watercolor</option>
+                            <option value="sketch">Sketch</option>
+                        </select>
+                    </div>
+                    
+                    <div class="quality-selector">
+                        <label for="quality-level">Quality Emphasis:</label>
+                        <select id="quality-level">
+                            <option value="high quality">High Quality</option>
+                            <option value="detailed">Detailed</option>
+                            <option value="ultra detailed">Ultra Detailed</option>
+                            <option value="8k">8K Resolution</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="generate-btn" class="action-btn">
+                        <i class="fas fa-wand-magic-sparkles"></i> Generate Prompt
+                    </button>
+                    <button id="random-btn" class="action-btn random-btn">
+                        <i class="fas fa-dice"></i> Random
+                    </button>
+                </div>
+
+                <div class="parameter-guide-toggle">
+                    <button id="show-guide-btn" class="toggle-btn">
+                        <i class="fas fa-sliders"></i> Show Parameter Guide
+                    </button>
+                </div>
+
+                <div id="parameter-guide" class="parameter-guide hidden">
+                    <div class="guide-header">
+                        <h3>Recommended Settings for Juggernaut-X-Hyper</h3>
+                        <button id="close-guide-btn" class="close-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="parameters-grid">
+                        <div class="parameter-card">
+                            <h4><i class="fas fa-walking"></i> Sampling Steps</h4>
+                            <div class="parameter-value">20-30</div>
+                            <p>Higher values (25-30) for more detailed images. For simpler images, 20 steps is often sufficient.</p>
+                        </div>
+                        
+                        <div class="parameter-card">
+                            <h4><i class="fas fa-balance-scale"></i> CFG Scale</h4>
+                            <div class="parameter-value">7-9</div>
+                            <p>Controls how closely the image follows your prompt. Higher values (10+) can cause artifacts.</p>
+                        </div>
+                        
+                        <div class="parameter-card">
+                            <h4><i class="fas fa-random"></i> Sampling Method</h4>
+                            <div class="parameter-value">DPM++ 2M Karras</div>
+                            <p>Best overall quality. Alternative: Euler a (faster) or DPM++ SDE Karras (more detailed).</p>
+                        </div>
+                        
+                        <div class="parameter-card">
+                            <h4><i class="fas fa-th"></i> Resolution</h4>
+                            <div class="parameter-value">1024×1024</div>
+                            <p>Optimal for most cases. For landscapes, try 1152×896. For portraits, try 896×1152.</p>
+                        </div>
+                        
+                        <div class="parameter-card">
+                            <h4><i class="fas fa-seedling"></i> Seed</h4>
+                            <div class="parameter-value">-1 (Random)</div>
+                            <p>Use -1 for exploration. Save seeds of images you like to recreate similar results later.</p>
+                        </div>
+                        
+                        <div class="parameter-card">
+                            <h4><i class="fas fa-percentage"></i> Denoising Strength</h4>
+                            <div class="parameter-value">0.6-0.8</div>
+                            <p>For img2img. Lower (0.4-0.6) preserves more of original; higher (0.7-0.9) for more creativity.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="positive-prompt-guide">
+                        <h4><i class="fas fa-magic"></i> Positive Prompt Structure</h4>
+                        <p>For best results with Juggernaut-X-Hyper, structure your positive prompts as comma-separated terms:</p>
+                        <div class="prompt-structure">
+                            <h5>Basic Structure:</h5>
+                            <div class="structure-example">
+                                <span class="subject">subject</span>, 
+                                <span class="details">visual details</span>, 
+                                <span class="scene">scene elements</span>, 
+                                <span class="lighting">lighting</span>, 
+                                <span class="style">style</span>, 
+                                <span class="quality">quality boosters</span>
+                            </div>
+                        </div>
+                        
+                        <div class="positive-examples">
+                            <div class="positive-category">
+                                <h5>Example Landscape Prompt:</h5>
+                                <p>majestic mountains, snow peaked summits, alpine forest, pristine lake reflection, golden hour sunlight, mist rising from valley, dramatic clouds, panoramic view, highly detailed, 8k uhd, professional photograph, sharp focus, atmospheric, cinematic lighting</p>
+                            </div>
+                            
+                            <div class="positive-category">
+                                <h5>Example Portrait Prompt:</h5>
+                                <p>portrait of woman, 30 years old, sharp features, elegant, dark hair, deep blue eyes, flawless skin, neutral expression, soft window light, blurred background, professional studio setup, shallow depth of field, high fashion, detailed features, award winning photography, photo realistic, 85mm lens</p>
+                            </div>
+                            
+                            <div class="positive-category">
+                                <h5>Useful Quality Boosters:</h5>
+                                <p>highly detailed, 8k uhd, dslr, soft lighting, high quality, film grain, Fujifilm XT3, professional, cinematic, artstation, award winning, masterpiece, sharp focus, HDR, beautiful lighting, golden hour, ray tracing, realistic</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="negative-prompt-guide">
+                        <h4><i class="fas fa-ban"></i> Standard Negative Prompt Terms</h4>
+                        <p>For best results with Juggernaut-X-Hyper, use these common negative terms (comma-separated):</p>
+                        <div class="negative-examples">
+                            <div class="negative-category">
+                                <h5>General Quality Issues:</h5>
+                                <p>bad anatomy, bad proportions, blurry, cropped, deformed, disfigured, duplicate, error, extra arms, extra fingers, extra legs, extra limbs, fused fingers, gross proportions, jpeg artifacts, long neck, low quality, lowres, malformed limbs, missing arms, missing legs, morbid, mutated, mutation, mutilated, poorly drawn face, poorly drawn hands, signature, text, too many fingers, ugly, username, watermark, worst quality</p>
+                            </div>
+                            
+                            <div class="negative-category">
+                                <h5>For Portrait/Character Images:</h5>
+                                <p>asymmetric eyes, bad hands, broken fingers, cross-eye, crossed eyes, disconnected limbs, extra digit, fused fingers, mangled fingers, malformed limbs, missing fingers, tiling, twisted fingers</p>
+                            </div>
+                            
+                            <div class="negative-category">
+                                <h5>For Photorealistic Images:</h5>
+                                <p>cartoon, 3d render, anime, illustration, painting, digital art, amateur, drawing, grainy</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-section">
+                <h2>Generated Prompts</h2>
+                
+                <div class="prompt-container">
+                    <div class="prompt-label">Positive Prompt</div>
+                    <div class="prompt-display">
+                        <p id="generated-prompt">Your optimized prompt will appear here...</p>
+                        <div class="prompt-actions">
+                            <button id="copy-btn" class="icon-btn" title="Copy to clipboard">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="prompt-container">
+                    <div class="prompt-label">Negative Prompt</div>
+                    <div class="prompt-display">
+                        <p id="negative-prompt">Your negative prompt will appear here...</p>
+                        <div class="prompt-actions">
+                            <button id="copy-negative-btn" class="icon-btn" title="Copy to clipboard">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checkbox-option">
+                    <input type="checkbox" id="auto-copy" checked>
+                    <label for="auto-copy">Auto-copy prompts when generated</label>
+                </div>
+                
+                <div id="loading" class="hidden">
+                    <div class="spinner"></div>
+                    <p>Crafting the perfect prompt...</p>
+                </div>
+                <div id="error-message" class="hidden">
+                    <i class="fas fa-triangle-exclamation"></i>
+                    <p>Error message will appear here</p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Optimized for Juggernaut-X-Hyper Stable Diffusion model</p>
+        </footer>
+    </div>
+
+    <div id="api-key-modal" class="modal">
+        <div class="modal-content">
+            <h2>API Key Settings</h2>
+            <p>Your API key is stored locally in your browser and never sent to our servers.</p>
+            <input type="text" id="api-key-input" placeholder="sk-or-...">
+            <div class="modal-buttons">
+                <button id="save-api-key" class="action-btn">Save Key</button>
+                <button id="reset-api-key" class="action-btn secondary-btn">Reset Key</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
